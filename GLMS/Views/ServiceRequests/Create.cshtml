@@ -1,0 +1,50 @@
+﻿@model GLMS.Models.ServiceRequest
+@{
+    ViewData["Title"] = "New Service Request";
+}
+
+<h2>New Service Request</h2>
+
+<form asp-action="Create">
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+    <div class="mb-3">
+        <label asp-for="ContractId" class="form-label">Contract</label>
+        <select asp-for="ContractId" asp-items="ViewBag.ContractId" class="form-select">
+            <option value="">-- Select Contract --</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Cost (USD)</label>
+        <input type="number" name="costUSD" step="0.01" min="0" class="form-control"
+               id="costUSD" oninput="estimateZar(this.value)" />
+        <small class="text-muted">Estimated ZAR: <span id="zarEstimate">—</span></small>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" class="form-select">
+            @foreach (var s in Enum.GetValues(typeof(GLMS.Models.ServiceRequestStatus)))
+            {
+                <option value="@s">@s</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Request</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+<script>
+    function estimateZar(usd) {
+        const rate = 18.5; // approximate display only — real rate applied on save
+        const zar = (parseFloat(usd) * rate).toFixed(2);
+        document.getElementById('zarEstimate').textContent = isNaN(zar) ? '—' : 'R ' + zar;
+    }
+</script>

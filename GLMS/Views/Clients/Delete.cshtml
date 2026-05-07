@@ -1,0 +1,24 @@
+﻿@model GLMS.Models.Client
+@{
+    ViewData["Title"] = "Delete Client";
+}
+
+<h2>Delete Client</h2>
+<p class="text-danger">Are you sure you want to delete this client?</p>
+
+<dl class="row">
+    <dt class="col-sm-3">Name</dt>
+    <dd class="col-sm-9">@Model.Name</dd>
+
+    <dt class="col-sm-3">Contact Details</dt>
+    <dd class="col-sm-9">@Model.ContactDetails</dd>
+
+    <dt class="col-sm-3">Region</dt>
+    <dd class="col-sm-9">@Model.Region</dd>
+</dl>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
