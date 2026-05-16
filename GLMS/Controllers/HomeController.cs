@@ -1,20 +1,28 @@
 using System.Diagnostics;
+using GLMS.Data;
 using GLMS.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GLMS.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly AppDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, AppDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            ViewBag.ClientCount = await _context.Clients.CountAsync();
+            ViewBag.ActiveContracts = await _context.Contracts
+                .CountAsync(c => c.Status == ContractStatus.Active);
+            ViewBag.RequestCount = await _context.ServiceRequests.CountAsync();
             return View();
         }
 
