@@ -17,19 +17,19 @@ namespace GLMS.Controllers
             _context = context;
             _webHostEnvironment = env;
         }
-
         public async Task<IActionResult> Index(DateTime? startDate, DateTime? endDate, ContractStatus? status)
         {
             var query = _context.Contracts.Include(c => c.Client).AsQueryable();
 
             if (startDate.HasValue)
                 query = query.Where(c => c.StartDate >= startDate.Value);
+
             if (endDate.HasValue)
                 query = query.Where(c => c.EndDate <= endDate.Value);
+
             if (status.HasValue)
                 query = query.Where(c => c.Status == status.Value);
 
-            ViewData["StatusList"] = new SelectList(Enum.GetValues(typeof(ContractStatus)));
             return View(await query.ToListAsync());
         }
 

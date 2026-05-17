@@ -3,67 +3,163 @@
     ViewData["Title"] = "Contracts";
 }
 
-<h2>Contracts</h2>
-<p><a asp-action="Create" class="btn btn-primary">Add New Contract</a></p>
+<div class="page-heading">
+    <h2><i class="fas fa-file-contract me-2"></i>Contracts</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> New Contract
+    </a>
+</div>
 
-<form method="get" class="row g-3 mb-4">
-    <div class="col-md-3">
-        <label class="form-label">Start Date From</label>
-        <input type="date" name="startDate" class="form-control" />
+<!-- Search / Filter Card -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-magnifying-glass me-2"></i>Search & Filter
     </div>
-    <div class="col-md-3">
-        <label class="form-label">End Date To</label>
-        <input type="date" name="endDate" class="form-control" />
+    <div class="card-body p-4">
+        <form method="get" asp-action="Index">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Start Date From</label>
+                    <input type="date" name="startDate" class="form-control"
+                           value="@Context.Request.Query["startDate"]" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">End Date To</label>
+                    <input type="date" name="endDate" class="form-control"
+                           value="@Context.Request.Query["endDate"]" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">-- All Statuses --</option>
+                        @foreach (var s in Enum.GetValues(typeof(GLMS.Models.ContractStatus)))
+                        {
+                            if (Context.Request.Query["status"].ToString() == s.ToString())
+                            {
+                                <option value="@s" selected="selected">@s</option>
+                            }
+                            else
+                            {
+                                <option value="@s">@s</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-1"></i> Search
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-rotate-left me-1"></i> Clear
+                    </a>
+                </div>
+            </div>
+        </form>
     </div>
-    <div class="col-md-3">
-        <label class="form-label">Status</label>
-        <select name="status" class="form-select">
-            <option value="">-- All --</option>
-            @foreach (var s in Enum.GetValues(typeof(GLMS.Models.ContractStatus)))
-            {
-                <option value="@s">@s</option>
-            }
-        </select>
-    </div>
-    <div class="col-md-3 d-flex align-items-end">
-        <button type="submit" class="btn btn-outline-primary me-2">Search</button>
-        <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
-    </div>
-</form>
+</div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Client</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Status</th>
-            <th>Service Level</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Client?.Name</td>
-                <td>@item.StartDate.ToShortDateString()</td>
-                <td>@item.EndDate.ToShortDateString()</td>
-                <td>
-                    <span class="badge
-                            @(item.Status == GLMS.Models.ContractStatus.Active ? "bg-success" :
-                                                    item.Status == GLMS.Models.ContractStatus.Expired ? "bg-danger" :
-                                                    item.Status == GLMS.Models.ContractStatus.OnHold ? "bg-warning" : "bg-secondary")">
-                    @item.Status
-                </span>
-            </td>
-            <td>@item.ServiceLevel</td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
-                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
-            </td>
-        </tr>
+<!-- Active Filters Notice -->
+@{
+    bool isFiltered = !string.IsNullOrEmpty(Context.Request.Query["startDate"]) ||
+                      !string.IsNullOrEmpty(Context.Request.Query["endDate"]) ||
+                      !string.IsNullOrEmpty(Context.Request.Query["status"]);
+}
+@if (isFiltered)
+{
+    <div class="alert alert-info d-flex align-items-center mb-3" role="alert">
+        <i class="fas fa-filter me-2"></i>
+        Showing filtered results &mdash; @Model.Count() contract(s) found.
+        <a asp-action="Index" class="ms-auto text-decoration-none">Clear filters</a>
+    </div>
+}
+
+<!-- Results Table -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-list me-2"></i>Contract List</span>
+        <span class="badge bg-secondary">@Model.Count() total</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                    <th>Service Level</th>
+                    <th>Agreement</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
+                            No contracts found matching your search.
+                        </td>
+                    </tr>
                 }
-    </tbody>
-</table>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <i class="fas fa-building me-1 text-muted"></i>
+                            @item.Client?.Name
+                        </td>
+                        <td>@item.StartDate.ToShortDateString()</td>
+                        <td>@item.EndDate.ToShortDateString()</td>
+                        <td>
+                            @if (item.Status == GLMS.Models.ContractStatus.Active)
+                            {
+                                <span class="badge bg-success">@item.Status</span>
+                            }
+                            else if (item.Status == GLMS.Models.ContractStatus.Expired)
+                            {
+                                <span class="badge bg-danger">@item.Status</span>
+                            }
+                            else if (item.Status == GLMS.Models.ContractStatus.OnHold)
+                            {
+                                <span class="badge bg-warning text-dark">@item.Status</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@item.Status</span>
+                            }
+                        </td>
+                        <td>@item.ServiceLevel</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.SignedAgreementPath))
+                            {
+                                <a href="/uploads/@item.SignedAgreementPath" target="_blank"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-file-pdf me-1"></i>PDF
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted" style="font-size:0.8rem;">None</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-info text-white">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-warning">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
