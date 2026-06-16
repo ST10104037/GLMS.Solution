@@ -1,7 +1,8 @@
 ﻿@{
-    Layout = null; // Explicitly ensure no layout scaffolding wraps this page
     ViewData["Title"] = "Login";
+    Layout = null;
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,110 +12,403 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
-        body {
-            background: #f0f4f8 !important; /* Forces the clean blue-grey background */
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            min-height: 100vh !important;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
             font-family: 'Segoe UI', sans-serif;
-            width: 100vw;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 9999; /* Keeps the login interface firmly on top of any floating background objects */
+            display: flex;
+            overflow: hidden;
         }
 
-        .login-card {
-            background: white;
+        /* ── Left Panel ── */
+        .left-panel {
+            width: 55%;
+            background: linear-gradient(135deg, #0d2137 0%, #1a3c5e 50%, #2e86c1 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .left-panel::before {
+                content: '';
+                position: absolute;
+                top: -120px;
+                right: -120px;
+                width: 400px;
+                height: 400px;
+                background: rgba(46,134,193,0.15);
+                border-radius: 50%;
+            }
+
+            .left-panel::after {
+                content: '';
+                position: absolute;
+                bottom: -80px;
+                left: -80px;
+                width: 300px;
+                height: 300px;
+                background: rgba(255,255,255,0.05);
+                border-radius: 50%;
+            }
+
+        .brand-logo {
+            width: 64px;
+            height: 64px;
+            background: rgba(255,255,255,0.15);
             border-radius: 16px;
-            padding: 40px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-        }
-
-        .logo {
-            width: 52px;
-            height: 52px;
-            background: #1a3c5e;
-            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 16px;
-            font-size: 1.4rem;
+            font-size: 1.8rem;
             color: white;
+            margin-bottom: 32px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
-        .btn-login {
-            background: #1a3c5e;
+        .left-panel h1 {
             color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            width: 100%;
-            font-size: 0.95rem;
-            font-weight: 600;
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            z-index: 1;
         }
 
-            .btn-login:hover {
-                background: #2e86c1;
+            .left-panel h1 span {
+                color: #5dade2;
+            }
+
+        .left-panel p {
+            color: rgba(255,255,255,0.7);
+            font-size: 1rem;
+            max-width: 380px;
+            line-height: 1.7;
+            margin-bottom: 40px;
+            z-index: 1;
+        }
+
+        .feature-list {
+            list-style: none;
+            z-index: 1;
+        }
+
+            .feature-list li {
+                color: rgba(255,255,255,0.85);
+                font-size: 0.88rem;
+                margin-bottom: 14px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+                .feature-list li .icon {
+                    width: 32px;
+                    height: 32px;
+                    background: rgba(255,255,255,0.1);
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 0.85rem;
+                    flex-shrink: 0;
+                }
+
+        .floating-card {
+            position: absolute;
+            bottom: 60px;
+            right: -20px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 20px 24px;
+            z-index: 2;
+        }
+
+            .floating-card .stat {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 10px;
+            }
+
+                .floating-card .stat:last-child {
+                    margin-bottom: 0;
+                }
+
+            .floating-card .stat-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.9rem;
+            }
+
+            .floating-card .stat-value {
                 color: white;
+                font-weight: 700;
+                font-size: 1rem;
+            }
+
+            .floating-card .stat-label {
+                color: rgba(255,255,255,0.6);
+                font-size: 0.72rem;
+            }
+
+        /* ── Right Panel ── */
+        .right-panel {
+            width: 45%;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 50px;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 380px;
+        }
+
+            .login-box h2 {
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: #1a3c5e;
+                margin-bottom: 6px;
+            }
+
+            .login-box .subtitle {
+                color: #718096;
+                font-size: 0.88rem;
+                margin-bottom: 36px;
+            }
+
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+            .input-wrapper i {
+                position: absolute;
+                left: 14px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #a0aec0;
+                font-size: 0.9rem;
+                pointer-events: none;
             }
 
         .form-control {
-            border-radius: 8px;
-            padding: 10px 14px;
+            padding: 12px 14px 12px 40px;
+            border-radius: 10px;
+            border: 1.5px solid #e2e8f0;
+            font-size: 0.9rem;
+            background: white;
+            transition: all 0.2s;
+            width: 100%;
         }
 
             .form-control:focus {
+                outline: none;
                 border-color: #2e86c1;
-                box-shadow: 0 0 0 3px rgba(46,134,193,0.15);
+                box-shadow: 0 0 0 3px rgba(46,134,193,0.12);
             }
+
+        .btn-signin {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #1a3c5e, #2e86c1);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
+        }
+
+            .btn-signin:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 6px 20px rgba(26,60,94,0.35);
+            }
+
+            .btn-signin:active {
+                transform: translateY(0);
+            }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+            .divider hr {
+                flex: 1;
+                border: none;
+                border-top: 1px solid #e2e8f0;
+            }
+
+            .divider span {
+                color: #a0aec0;
+                font-size: 0.78rem;
+            }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: #718096;
+            font-size: 0.75rem;
+            margin-top: 24px;
+        }
+
+            .security-badge i {
+                color: #27ae60;
+            }
+
+        .copyright {
+            position: absolute;
+            bottom: 24px;
+            color: #a0aec0;
+            font-size: 0.72rem;
+        }
+
+        .alert-danger {
+            border-radius: 10px;
+            border: none;
+            background: #fff5f5;
+            color: #c53030;
+            border-left: 4px solid #fc8181;
+            font-size: 0.85rem;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
-    <div class="login-card">
-        <div class="logo"><i class="fas fa-truck-fast"></i></div>
-        <h4 class="text-center mb-1" style="color:#1a3c5e;font-weight:700;">TechMove GLMS</h4>
-        <p class="text-center text-muted mb-4" style="font-size:0.85rem;">Global Logistics Management System</p>
 
-        @if (ViewBag.Error != null)
-        {
-            <div class="alert alert-danger py-2" style="font-size:0.85rem;">
-                <i class="fas fa-circle-exclamation me-1"></i>@ViewBag.Error
-            </div>
-        }
+    <!-- Left Panel -->
+    <div class="left-panel">
+        <div class="brand-logo">
+            <i class="fas fa-truck-fast"></i>
+        </div>
 
-        <form method="post">
-            <div class="mb-3">
-                <label class="form-label" style="font-size:0.82rem;font-weight:600;color:#4a5568;">
-                    Username
-                </label>
-                <input type="text" name="username" class="form-control" placeholder="admin" required />
+        <h1>TechMove<br /><span>GLMS</span></h1>
+        <p>The enterprise-grade Global Logistics Management System powering smarter freight operations worldwide.</p>
+
+        <ul class="feature-list">
+            <li>
+                <div class="icon"><i class="fas fa-file-contract" style="color:#5dade2;"></i></div>
+                Centralised contract management & SLA tracking
+            </li>
+            <li>
+                <div class="icon"><i class="fas fa-globe" style="color:#82e0aa;"></i></div>
+                Real-time international currency conversion
+            </li>
+            <li>
+                <div class="icon"><i class="fas fa-clipboard-check" style="color:#f8c471;"></i></div>
+                Automated service request workflow engine
+            </li>
+            <li>
+                <div class="icon"><i class="fas fa-shield-halved" style="color:#f1948a;"></i></div>
+                Secure JWT-authenticated API architecture
+            </li>
+        </ul>
+
+        <!-- Floating stats card -->
+        <div class="floating-card">
+            <div class="stat">
+                <div class="stat-icon" style="background:rgba(93,173,226,0.2);">
+                    <i class="fas fa-boxes-stacked" style="color:#5dade2;"></i>
+                </div>
+                <div>
+                    <div class="stat-value">99.9%</div>
+                    <div class="stat-label">System Uptime</div>
+                </div>
             </div>
-            <div class="mb-4">
-                <label class="form-label" style="font-size:0.82rem;font-weight:600;color:#4a5568;">
-                    Password
-                </label>
-                <input type="password" name="password" class="form-control" placeholder="••••••••" required />
+            <div class="stat">
+                <div class="stat-icon" style="background:rgba(130,224,170,0.2);">
+                    <i class="fas fa-lock" style="color:#82e0aa;"></i>
+                </div>
+                <div>
+                    <div class="stat-value">256-bit</div>
+                    <div class="stat-label">SSL Encrypted</div>
+                </div>
             </div>
-            <button type="submit" class="btn-login">
-                <i class="fas fa-right-to-bracket me-2"></i>Sign In
-            </button>
-        </form>
-        <p class="text-center mt-4 text-muted" style="font-size:0.75rem;">
-            Demo credentials: admin / admin123
-        </p>
+        </div>
     </div>
 
-    <script>
-        // Frontend safety script to remove leftover layout sidebars if they bleed into this view context
-        document.querySelectorAll('.sidebar, footer, .topbar').forEach(el => el.style.display = 'none');
-        var mainWrapper = document.querySelector('.main-wrapper');
-        if(mainWrapper) { mainWrapper.style.marginLeft = '0'; }
-    </script>
+    <!-- Right Panel -->
+    <div class="right-panel">
+        <div class="login-box">
+            <h2>Welcome back</h2>
+            <p class="subtitle">Sign in to your GLMS account to continue</p>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert-danger">
+                    <i class="fas fa-circle-exclamation me-2"></i>@ViewBag.Error
+                </div>
+            }
+
+            <form method="post">
+                <label class="form-label">Username</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="username" class="form-control"
+                           placeholder="Enter your username" required />
+                </div>
+
+                <label class="form-label">Password</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" class="form-control"
+                           placeholder="Enter your password" required />
+                </div>
+
+                <button type="submit" class="btn-signin">
+                    <i class="fas fa-right-to-bracket me-2"></i>Sign In
+                </button>
+            </form>
+
+            <div class="divider">
+                <hr /><span>SECURED BY TECHM0VE</span><hr />
+            </div>
+
+            <div class="security-badge">
+                <i class="fas fa-shield-halved"></i>
+                Your connection is encrypted and secure
+            </div>
+        </div>
+
+        <p class="copyright">&copy; @DateTime.Now.Year TechMove Logistics. All rights reserved.</p>
+    </div>
+
 </body>
 </html>
