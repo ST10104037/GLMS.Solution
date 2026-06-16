@@ -1,0 +1,120 @@
+﻿@{
+    Layout = null; // Explicitly ensure no layout scaffolding wraps this page
+    ViewData["Title"] = "Login";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TechMove GLMS - Sign In</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body {
+            background: #f0f4f8 !important; /* Forces the clean blue-grey background */
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 100vh !important;
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            width: 100vw;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 9999; /* Keeps the login interface firmly on top of any floating background objects */
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        .logo {
+            width: 52px;
+            height: 52px;
+            background: #1a3c5e;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 1.4rem;
+            color: white;
+        }
+
+        .btn-login {
+            background: #1a3c5e;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+            .btn-login:hover {
+                background: #2e86c1;
+                color: white;
+            }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 10px 14px;
+        }
+
+            .form-control:focus {
+                border-color: #2e86c1;
+                box-shadow: 0 0 0 3px rgba(46,134,193,0.15);
+            }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="logo"><i class="fas fa-truck-fast"></i></div>
+        <h4 class="text-center mb-1" style="color:#1a3c5e;font-weight:700;">TechMove GLMS</h4>
+        <p class="text-center text-muted mb-4" style="font-size:0.85rem;">Global Logistics Management System</p>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger py-2" style="font-size:0.85rem;">
+                <i class="fas fa-circle-exclamation me-1"></i>@ViewBag.Error
+            </div>
+        }
+
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label" style="font-size:0.82rem;font-weight:600;color:#4a5568;">
+                    Username
+                </label>
+                <input type="text" name="username" class="form-control" placeholder="admin" required />
+            </div>
+            <div class="mb-4">
+                <label class="form-label" style="font-size:0.82rem;font-weight:600;color:#4a5568;">
+                    Password
+                </label>
+                <input type="password" name="password" class="form-control" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="btn-login">
+                <i class="fas fa-right-to-bracket me-2"></i>Sign In
+            </button>
+        </form>
+        <p class="text-center mt-4 text-muted" style="font-size:0.75rem;">
+            Demo credentials: admin / admin123
+        </p>
+    </div>
+
+    <script>
+        // Frontend safety script to remove leftover layout sidebars if they bleed into this view context
+        document.querySelectorAll('.sidebar, footer, .topbar').forEach(el => el.style.display = 'none');
+        var mainWrapper = document.querySelector('.main-wrapper');
+        if(mainWrapper) { mainWrapper.style.marginLeft = '0'; }
+    </script>
+</body>
+</html>

@@ -1,36 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using GLMS.Data;
+﻿using GLMS.Services;
 using GLMS.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GLMS.Controllers
 {
     public class ClientsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ApiService _apiService;
 
-        public ClientsController(AppDbContext context)
+        public ClientsController(ApiService apiService)
         {
-            _context = context;
+            _apiService = apiService;
         }
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Clients.ToListAsync());
+            var clients = await _apiService.GetClientsAsync();
+            return View(clients);
         }
 
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null) return NotFound();
-            var client = await _context.Clients.FirstOrDefaultAsync(m => m.Id == id);
+            var client = await _apiService.GetClientAsync(id);
             if (client == null) return NotFound();
             return View(client);
         }
 
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -38,39 +34,15 @@ namespace GLMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(client);
-                await _context.SaveChangesAsync();
+                await _apiService.CreateClientAsync(client);
                 return RedirectToAction(nameof(Index));
             }
             return View(client);
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null) return NotFound();
-            var client = await _context.Clients.FindAsync(id);
-            if (client == null) return NotFound();
-            return View(client);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Client client)
-        {
-            if (id != client.Id) return NotFound();
-            if (ModelState.IsValid)
-            {
-                _context.Update(client);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(client);
-        }
-
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null) return NotFound();
-            var client = await _context.Clients.FirstOrDefaultAsync(m => m.Id == id);
+            var client = await _apiService.GetClientAsync(id);
             if (client == null) return NotFound();
             return View(client);
         }
@@ -79,9 +51,7 @@ namespace GLMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var client = await _context.Clients.FindAsync(id);
-            if (client != null) _context.Clients.Remove(client);
-            await _context.SaveChangesAsync();
+            await _apiService.DeleteClientAsync(id);
             return RedirectToAction(nameof(Index));
         }
     }
