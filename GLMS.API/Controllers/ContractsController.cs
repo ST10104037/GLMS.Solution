@@ -54,6 +54,24 @@ namespace GLMS.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = contract.Id }, contract);
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] Contract contract)
+        {
+            if (id != contract.Id) return BadRequest();
+
+            var existing = await _context.Contracts.FindAsync(id);
+            if (existing == null) return NotFound();
+
+            existing.ClientId = contract.ClientId;
+            existing.StartDate = contract.StartDate;
+            existing.EndDate = contract.EndDate;
+            existing.Status = contract.Status;
+            existing.ServiceLevel = contract.ServiceLevel;
+
+            await _context.SaveChangesAsync();
+            return Ok(existing);
+        }
+
         [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromBody] ContractStatus newStatus)
         {

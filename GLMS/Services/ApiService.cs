@@ -120,6 +120,14 @@ namespace GLMS.Services
             return response.IsSuccessStatusCode;
         }
 
+        public async Task<bool> UpdateContractAsync(Contract contract)
+        {
+            AttachToken();
+            var response = await _httpClient.PutAsync(
+                $"/api/contracts/{contract.Id}", ToJson(contract));
+            return response.IsSuccessStatusCode;
+        }
+
         public async Task<bool> UpdateContractStatusAsync(int id, ContractStatus newStatus)
         {
             AttachToken();

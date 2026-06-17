@@ -62,8 +62,27 @@ namespace GLMS.Controllers
                 await _apiService.CreateContractAsync(contract);
                 return RedirectToAction(nameof(Index));
             }
+
             ViewBag.Clients = await _apiService.GetClientsAsync();
             return View(contract);
+        }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            var contract = await _apiService.GetContractAsync(id);
+            if (contract == null) return NotFound();
+            ViewBag.Clients = await _apiService.GetClientsAsync();
+            return View(contract);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Contract contract)
+        {
+            if (id != contract.Id) return NotFound();
+
+            await _apiService.UpdateContractAsync(contract);
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Delete(int id)
